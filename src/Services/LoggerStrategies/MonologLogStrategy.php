@@ -4,7 +4,7 @@
 namespace App\Services\LoggerStrategies;
 
 
-use App\Services\HashResponse;
+use App\DTO\HashResponse;
 use Psr\Log\LoggerInterface;
 
 /**

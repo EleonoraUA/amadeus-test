@@ -1,12 +1,12 @@
 <?php
 
 
-namespace App\Services;
+namespace App\DTO;
 
 
 /**
  * Class HashResponse
- * @package App\Services
+ * @package App\DTO
  */
 class HashResponse
 {

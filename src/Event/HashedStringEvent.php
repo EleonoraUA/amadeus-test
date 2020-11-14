@@ -4,7 +4,7 @@
 namespace App\Event;
 
 
-use App\Services\HashResponse;
+use App\DTO\HashResponse;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**

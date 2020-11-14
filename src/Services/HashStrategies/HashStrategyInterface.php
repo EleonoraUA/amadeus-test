@@ -2,7 +2,7 @@
 namespace App\Services\HashStrategies;
 
 
-use App\Services\HashResponse;
+use App\DTO\HashResponse;
 
 /**
  * Interface HashStrategyInterface

@@ -1,4 +1,8 @@
 parameters:
+    # Possible values: md5, md5md5, sha1, md5sha1, aes256
+    hashAlgorithm: 'md5md5'
+    #Possible values: file, monolog
+    logAlgorithm: 'monolog'
 
 services:
     # default configuration for services in *this* file
@@ -6,8 +10,6 @@ services:
         autowire: true      # Automatically injects dependencies in your Services.
         autoconfigure: true # Automatically registers your Services as commands, event subscribers, etc.
         bind:
-            $hashAlgorithm: '%env(HASH_ALGORITHM)%'
-            $logAlgorithm: '%env(LOGGER_ALGORITHM)%'
             $logFilePath: '%env(LOGGER_FILE_PATH)%'
             $encryptSecretKey: '%env(ENCRYPT_KEY_AES256)%'
 
@@ -23,11 +25,4 @@ services:
             tags: ['hash_strategy']
         App\Services\LoggerStrategies\LoggerStrategyInterface:
             tags: [ 'logger_strategy' ]
-
-    App\Services\HashService:
-        arguments: [!tagged hash_strategy]
-
-    App\Services\LoggerService:
-        arguments: [ !tagged logger_strategy ]
-
 

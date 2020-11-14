@@ -2,9 +2,8 @@
 namespace App\Services;
 
 
+use App\DTO\HashResponse;
 use App\Event\HashedStringEvent;
-use App\Exception\AlgorithmNotFoundException;
-use App\Services\HashStrategies\AbstractHashStrategy;
 use App\Services\HashStrategies\HashStrategyInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -31,21 +30,22 @@ class HashService
 
     /**
      * HashService constructor.
-     * @param $hashStrategies
-     * @param string $hashAlgorithm
      * @param EventDispatcherInterface $eventDispatcher
-     * @throws AlgorithmNotFoundException
      */
-    public function __construct($hashStrategies, string $hashAlgorithm, EventDispatcherInterface $eventDispatcher)
+    public function __construct(EventDispatcherInterface $eventDispatcher)
     {
-        foreach ($hashStrategies as $hashStrategy) {
-            $hashClassName = get_class($hashStrategy);
-            $this->hashStrategies[$hashClassName] = $hashStrategy;
-        }
-
         $this->eventDispatcher = $eventDispatcher;
+    }
 
-        $this->init($hashAlgorithm);
+    /**
+     * @param HashStrategyInterface $currentHashStrategy
+     * @return $this
+     */
+    public function setCurrentHashStrategy(HashStrategyInterface $currentHashStrategy): self
+    {
+        $this->currentHashStrategy = $currentHashStrategy;
+
+        return $this;
     }
 
     /**
@@ -59,20 +59,5 @@ class HashService
         $this->eventDispatcher->dispatch(new HashedStringEvent($stringToHash, $response), HashedStringEvent::NAME);
 
         return $response;
-    }
-
-    /**
-     * @param string $hashAlgorithm
-     * @throws AlgorithmNotFoundException
-     */
-    protected function init(string $hashAlgorithm): void
-    {
-        $hashClassName = AbstractHashStrategy::getNamespace() . ucfirst($hashAlgorithm) . 'HashStrategy';
-
-        if (!isset($this->hashStrategies[$hashClassName])) {
-            throw new AlgorithmNotFoundException();
-        }
-
-        $this->currentHashStrategy = $this->hashStrategies[$hashClassName];
     }
 }

@@ -4,7 +4,7 @@
 namespace App\Services\HashStrategies;
 
 
-use App\Services\HashResponse;
+use App\DTO\HashResponse;
 
 /**
  * Class Md5sha1HashStrategy

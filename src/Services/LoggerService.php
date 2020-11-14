@@ -4,6 +4,7 @@
 namespace App\Services;
 
 
+use App\DTO\HashResponse;
 use App\Services\LoggerStrategies\AbstractLoggerStrategy;
 use App\Services\LoggerStrategies\LoggerStrategyInterface;
 
@@ -14,30 +15,9 @@ use App\Services\LoggerStrategies\LoggerStrategyInterface;
 class LoggerService
 {
     /**
-     * @var array
-     */
-    protected $loggerStrategies;
-
-    /**
      * @var LoggerStrategyInterface
      */
     protected $currentLogStrategy;
-
-    /**
-     * LoggerService constructor.
-     * @param $loggerStrategies
-     * @param string $logAlgorithm
-     */
-    public function __construct($loggerStrategies, string $logAlgorithm)
-    {
-        foreach ($loggerStrategies as $loggerStrategy) {
-            $logClassName = get_class($loggerStrategy);
-            $this->loggerStrategies[$logClassName] = $loggerStrategy;
-        }
-
-        $this->init($logAlgorithm);
-    }
-
 
     /**
      * @param string $inputString
@@ -49,16 +29,13 @@ class LoggerService
     }
 
     /**
-     * @param string $logAlgorithm
+     * @param LoggerStrategyInterface $currentLogStrategy
+     * @return $this
      */
-    protected function init(string $logAlgorithm): void
+    public function setCurrentLogStrategy(LoggerStrategyInterface $currentLogStrategy): self
     {
-        $logClassName = AbstractLoggerStrategy::getNamespace() . ucfirst($logAlgorithm) . 'LogStrategy';
+        $this->currentLogStrategy = $currentLogStrategy;
 
-        if (!isset($this->loggerStrategies[$logClassName])) {
-            throw new AlgorithmNotFoundException();
-        }
-
-        $this->currentLogStrategy = $this->loggerStrategies[$logClassName];
+        return $this;
     }
 }
