@@ -29,7 +29,7 @@ class HashServiceCompiler implements CompilerPassInterface
         $hashClassName = AbstractHashStrategy::getNamespace() . ucfirst($hashAlgorithm) . 'HashStrategy';
 
         if (!isset($taggedStrategies[$hashClassName])) {
-            throw new AlgorithmNotFoundException('Hash class name not found: ' . $hashClassName);
+            throw new AlgorithmNotFoundException('Hash class name not found: ' . $hashClassName . '. Hash algorithm is invalid ' . $hashAlgorithm);
         }
 
         $contextDefinition->addMethodCall(

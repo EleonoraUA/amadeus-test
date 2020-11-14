@@ -29,7 +29,7 @@ class LoggerServiceCompiler implements CompilerPassInterface
         $loggerClassName = AbstractLoggerStrategy::getNamespace() . ucfirst($logAlgorithm) . 'LogStrategy';
 
         if (!isset($taggedStrategies[$loggerClassName])) {
-            throw new AlgorithmNotFoundException('Logger Class Name not found ' . $loggerClassName);
+            throw new AlgorithmNotFoundException('Logger Class Name not found ' . $loggerClassName . '. Log algorithm is invalid ' . $logAlgorithm);
         }
 
         $contextDefinition->addMethodCall(
