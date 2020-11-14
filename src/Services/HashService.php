@@ -2,9 +2,11 @@
 namespace App\Services;
 
 
+use App\Event\HashedStringEvent;
 use App\Exception\AlgorithmNotFoundException;
 use App\Services\HashStrategies\AbstractHashStrategy;
 use App\Services\HashStrategies\HashStrategyInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class HashService
@@ -12,11 +14,6 @@ use App\Services\HashStrategies\HashStrategyInterface;
  */
 class HashService
 {
-    /**
-     * @var string
-     */
-    protected $currentHashAlgrthm;
-
     /**
      * @var array
      */
@@ -28,19 +25,25 @@ class HashService
     protected $currentHashStrategy;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * HashService constructor.
      * @param $hashStrategies
      * @param string $hashAlgorithm
+     * @param EventDispatcherInterface $eventDispatcher
      * @throws AlgorithmNotFoundException
      */
-    public function __construct($hashStrategies, string $hashAlgorithm)
+    public function __construct($hashStrategies, string $hashAlgorithm, EventDispatcherInterface $eventDispatcher)
     {
         foreach ($hashStrategies as $hashStrategy) {
             $hashClassName = get_class($hashStrategy);
             $this->hashStrategies[$hashClassName] = $hashStrategy;
         }
 
-        $this->currentHashAlgrthm = $hashAlgorithm;
+        $this->eventDispatcher = $eventDispatcher;
 
         $this->init($hashAlgorithm);
     }
@@ -51,7 +54,11 @@ class HashService
      */
     public function hash(string $stringToHash): HashResponse
     {
-        return $this->currentHashStrategy->hash($stringToHash);
+        $response = $this->currentHashStrategy->hash($stringToHash);
+
+        $this->eventDispatcher->dispatch(new HashedStringEvent($stringToHash, $response), HashedStringEvent::NAME);
+
+        return $response;
     }
 
     /**
